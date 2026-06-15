@@ -484,7 +484,7 @@ body {
 
 .theme-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin: 30px 0;
 }
@@ -583,54 +583,7 @@ body {
     color: white;
 }
 
-/* Bouncing mascots animation */
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
 
-.bouncing-mascots {
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-    margin-bottom: 10px;
-    height: 72px;
-}
-
-.bouncing-emoji {
-    font-size: 2.8em;
-    animation: floaty 3.2s ease-in-out infinite;
-}
-
-@keyframes floaty {
-    0% { transform: translateY(0) rotate(-2deg); }
-    50% { transform: translateY(-18px) rotate(2deg); }
-    100% { transform: translateY(0) rotate(-2deg); }
-}
-
-.bouncing-emoji:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.bouncing-emoji:nth-child(2) {
-    animation-delay: 0s;
-}
-
-.bouncing-emoji:nth-child(3) {
-    animation-delay: 0s;
-}
-
-.bouncing-emoji:nth-child(4) {
-    animation-delay: 0s;
-}
-
-.bouncing-emoji:nth-child(5) {
-    animation-delay: 0s;
-}
 
 /* Mascot main section */
 .mascot-main-section {
@@ -701,7 +654,8 @@ body {
     min-height: 280px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
 }
 
 .mascot-card:hover {
@@ -807,11 +761,6 @@ body {
 .mascot-card.highlighted-O .user-mascot-badge {
     background: rgba(255, 255, 255, 0.3);
     color: white;
-}
-
-.mascot-emoji {
-    font-size: 3em;
-    margin-bottom: 10px;
 }
 
 .mascot-name {
@@ -931,15 +880,6 @@ body {
     
     .question-text {
         font-size: 1.1em;
-    }
-    
-    .bouncing-mascots {
-        gap: 10px;
-        height: 50px;
-    }
-    
-    .bouncing-emoji {
-        font-size: 2em;
     }
     
     .mascot-emoji-large {

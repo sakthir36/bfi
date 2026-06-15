@@ -248,7 +248,7 @@ const baseQuestions = [
             }
         };
 
-        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTAz1S_UlkCujgoVnDWPSBST2gzzUYu6xiHFGYFICLlTSh7La2tW_q7MNADI48MWfI/exec";
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYZCGxB0OI7gao4bywVn3Cpak4yBa4HCnXaBOoLyEuwLFrHFKXURYpnVQi9GsFPpq3/exec";
         let currentQuestion = 0;
         let answers = new Array(15).fill(null);
         let lastResults = null;
@@ -266,11 +266,13 @@ const baseQuestions = [
             breast_cancer_eligible: "",
             mammogram_before: "",
             mammogram_discouraging_factors: [],
+            mammogram_other_elaboration: "",
             mammogram_last_time: "",
             mammogram_discomfort_rating: "",
             colorectal_cancer_importance: "",
             colorectal_cancer_eligible: "",
             colonoscopy_before: "",
+            colonoscopy_other_elaboration: "",
             colonoscopy_last_time: "",
             colonoscopy_discomfort_rating: "",
             colonoscopy_discouraging_factors: []
@@ -362,6 +364,7 @@ const baseQuestions = [
             currentQuestion = 0;
             document.querySelector('.intro-screen').classList.remove('active');
             document.querySelector('.quiz-screen').classList.add('active');
+            updateProgress();
             displayQuestion();
         }
 
@@ -384,7 +387,6 @@ const baseQuestions = [
                 optionsContainer.appendChild(btn);
             });
 
-            updateProgress();
             updateButtons();
         }
 
@@ -394,9 +396,25 @@ const baseQuestions = [
         }
 
         function updateProgress() {
-            const progress = ((currentQuestion + 1) / 15) * 100;
+            const answeredCount = answers.filter(answer => answer !== null).length;
+            const progress = (answeredCount / 15) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressPercentage').textContent = Math.round(progress) + '%';
+        }
+
+        function updateHealthProgress() {
+            const visibleQuestions = getVisibleQuestions();
+            const totalVisible = visibleQuestions.length;
+            const answeredCount = visibleQuestions.filter(q => {
+                if (q.type === 'checkbox') {
+                    return healthResponses[q.id].length > 0;
+                } else {
+                    return healthResponses[q.id] !== "";
+                }
+            }).length;
+            const progress = (answeredCount / totalVisible) * 100;
+            document.getElementById('healthProgressBar').style.width = progress + '%';
+            document.getElementById('healthProgressPercentage').textContent = Math.round(progress) + '%';
         }
 
         function updateButtons() {
@@ -417,6 +435,7 @@ const baseQuestions = [
 
             if (currentQuestion < 14) {
                 currentQuestion++;
+                updateProgress();
                 displayQuestion();
             } else {
                 // Show loading screen for 0.5 seconds before displaying health screening
@@ -435,15 +454,18 @@ const baseQuestions = [
                         breast_cancer_eligible: "",
                         mammogram_before: "",
                         mammogram_discouraging_factors: [],
+                        mammogram_other_elaboration: "",
                         mammogram_last_time: "",
                         mammogram_discomfort_rating: "",
                         colorectal_cancer_importance: "",
                         colorectal_cancer_eligible: "",
                         colonoscopy_before: "",
+                        colonoscopy_other_elaboration: "",
                         colonoscopy_last_time: "",
                         colonoscopy_discomfort_rating: "",
                         colonoscopy_discouraging_factors: []
                     };
+                    updateHealthProgress();
                     displayHealthQuestion();
                 }, 500);
             }
@@ -470,11 +492,6 @@ const baseQuestions = [
             
             document.getElementById('healthQuestionNumber').textContent = `Question ${currentHealthQuestion + 1} of ${totalVisible}`;
             document.getElementById('healthQuestionText').textContent = question.question;
-            
-            // Update progress bar
-            const progress = ((currentHealthQuestion + 1) / totalVisible) * 100;
-            document.getElementById('healthProgressBar').style.width = progress + '%';
-            document.getElementById('healthProgressPercentage').textContent = Math.round(progress) + '%';
             
             // Render options based on question type
             const optionsContainer = document.getElementById('healthOptionsContainer');
@@ -511,6 +528,37 @@ const baseQuestions = [
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(option));
                     optionsContainer.appendChild(label);
+                    
+                    // Add text input for "Others" option
+                    if (option === 'Others' && healthResponses[question.id].includes('Others')) {
+                        const elaborationKey = question.id === 'mammogram_discouraging_factors' ? 'mammogram_other_elaboration' : 'colonoscopy_other_elaboration';
+                        const textContainer = document.createElement('div');
+                        textContainer.className = 'health-other-elaboration';
+                        textContainer.style.marginTop = '10px';
+                        textContainer.style.marginLeft = '40px';
+                        
+                        const textInput = document.createElement('textarea');
+                        textInput.className = 'health-other-text';
+                        textInput.placeholder = 'Please elaborate...';
+                        textInput.value = healthResponses[elaborationKey];
+                        textInput.style.width = '100%';
+                        textInput.style.minHeight = '60px';
+                        textInput.style.padding = '8px';
+                        textInput.style.borderRadius = '6px';
+                        textInput.style.border = '1px solid #ccc';
+                        textInput.style.fontFamily = 'inherit';
+                        textInput.onchange = (e) => {
+                            healthResponses[elaborationKey] = e.target.value;
+                            console.log('Elaboration text saved (onchange):', elaborationKey, e.target.value);
+                        };
+                        textInput.oninput = (e) => {
+                            healthResponses[elaborationKey] = e.target.value;
+                            console.log('Elaboration text updated (oninput):', elaborationKey, e.target.value);
+                        };
+                        
+                        textContainer.appendChild(textInput);
+                        optionsContainer.appendChild(textContainer);
+                    }
                 });
             } else if (question.type === 'scale') {
                 const scaleContainer = document.createElement('div');
@@ -570,6 +618,13 @@ const baseQuestions = [
                 healthResponses[questionId].push(option);
             }
             document.getElementById('healthNextBtn').disabled = healthResponses[questionId].length === 0;
+            
+            // Re-render the question to show/hide the elaboration text input when "Others" is toggled
+            const visibleQuestions = getVisibleQuestions();
+            const question = visibleQuestions[currentHealthQuestion];
+            if (question.type === 'checkbox' && option === 'Others') {
+                displayHealthQuestion();
+            }
         }
 
         function selectHealthScale(questionId, value) {
@@ -595,6 +650,7 @@ const baseQuestions = [
             
             if (currentHealthQuestion < visibleQuestions.length - 1) {
                 currentHealthQuestion++;
+                updateHealthProgress();
                 displayHealthQuestion();
             } else {
                 proceedToFinalResults();
@@ -656,23 +712,23 @@ const baseQuestions = [
             const descriptions = {
                 E: {
                     high: "Wah you damn extroverted lah! Party animal type - confirm plus chop the life of every gathering. You love making new friends and sibeh vocal one. Probably your phone always got 99+ WhatsApp notifications.",
-                    low: "You more introverted lah, prefer small gatherings or stay home shiok shiok. Not that you don't like people, but too much socializing makes you sian. Your ideal Friday night is Netflix and chill at home, not Clarke Quay."
+                    low: "You more introverted lah, prefer small gatherings or stay home shiok shiok. Not that you don't like people, but too much socializing makes you sian. Your ideal Friday night got Netflix at home, not Clarke Quay."
                 },
                 A: {
-                    high: "Super agreeable! You the type who always think of others first, very accommodating and kind-hearted. When your friends need help, you drop everything to help them. Sometimes must remember to take care of yourself also hor!",
-                    low: "You quite straight-forward and direct lah. Tell things as it is, don't really sugarcoat. Not that you're mean, but you value honesty over making everyone happy. Some people might find you blunt, but at least you genuine!"
+                    high: "Super agreeable! Always think of others first one, very accommodating and kind-hearted. When your friends need help, you drop everything to help them. Remember to take care of yourself also hor!",
+                    low: "You quite straight-forward and direct lah. Tell things as it is, don't sugarcoat one. Not that you're mean liao, but you value honesty over making everyone happy. Some people might find you blunt, but at least you a real one leh!"
                 },
                 C: {
                     high: "Damn organized and responsible sia! Your life got structure, everything planned properly. You the type who color-code your calendar and actually stick to your to-do list. Boss sure like you one!",
-                    low: "You more spontaneous and flexible lah. Planning is not really your strong suit - you prefer to wing it and see how. Your room might be messy but somehow you function okay mah. YOLO mindset!"
+                    low: "You more spontaneous and flexible lah. Planning not really your strong suit; you prefer to wing it and see how. Your room might be messy but somehow you function okay liao. YOLO mindset!"
                 },
                 N: {
-                    high: "You quite sensitive to stress leh. Small things also can make you worried or anxious. Must learn to relax more hor! Maybe go exercise or meditation - cannot always stress until cannot sleep.",
+                    high: "You quite sensitive to stress leh. Small things also can make you worried or anxious. Must learn to relax more hor! Maybe go exercise or meditation, cannot always stress until cannot sleep.",
                     low: "Sibeh steady pom pi pi! You very emotionally stable, not easily stressed or upset. Even when things go wrong, you can handle it calmly. This one good quality lah, but remember to still show emotions sometimes!"
                 },
                 O: {
-                    high: "Very open-minded and creative! You love new experiences, always exploring and trying different things. Confirm the type who will eat at new restaurant or travel to ulu places. Your Instagram probably very interesting!",
-                    low: "You prefer what's familiar and comfortable lah. Routine is good for you - same hawker stall, same coffee order, same route to work. Not boring, just you know what you like! Why change when current one okay already?"
+                    high: "Very open-minded and creative! You always exploring and trying different things one. Confirm the type who will eat at new restaurant or travel to ulu places. Your Instagram probably very interesting!",
+                    low: "You like what's familiar lah. Routine is good for you - same hawker stall, same coffee order, same route to work. Not boring one, just you know what you like! Why change when current one okay already?"
                 }
             };
 
@@ -757,6 +813,8 @@ const baseQuestions = [
                 exportData.mammogram_last_time = healthResponses.mammogram_last_time || 'n/a';
                 exportData.mammogram_discomfort_rating = healthResponses.mammogram_discomfort_rating || 'n/a';
                 exportData.mammogram_discouraging_factors = (healthResponses.mammogram_discouraging_factors && healthResponses.mammogram_discouraging_factors.length > 0) ? healthResponses.mammogram_discouraging_factors.join('; ') : 'none';
+                exportData.mammogram_other_elaboration = healthResponses.mammogram_other_elaboration || '';
+                console.log('Female - mammogram_other_elaboration:', healthResponses.mammogram_other_elaboration);
             } else if (healthResponses.gender === "Male") {
                 exportData.colorectal_cancer_importance = healthResponses.colorectal_cancer_importance || 'not specified';
                 exportData.colorectal_cancer_eligible = healthResponses.colorectal_cancer_eligible || 'not specified';
@@ -764,7 +822,11 @@ const baseQuestions = [
                 exportData.colonoscopy_last_time = healthResponses.colonoscopy_last_time || 'n/a';
                 exportData.colonoscopy_discomfort_rating = healthResponses.colonoscopy_discomfort_rating || 'n/a';
                 exportData.colonoscopy_discouraging_factors = (healthResponses.colonoscopy_discouraging_factors && healthResponses.colonoscopy_discouraging_factors.length > 0) ? healthResponses.colonoscopy_discouraging_factors.join('; ') : 'none';
+                exportData.colonoscopy_other_elaboration = healthResponses.colonoscopy_other_elaboration || '';
+                console.log('Male - colonoscopy_other_elaboration:', healthResponses.colonoscopy_other_elaboration);
             }
+            
+            console.log('Export data to be sent:', exportData);
 
             if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
                 console.log('Google Sheets integration not configured. Health screening data:', exportData);
@@ -776,6 +838,8 @@ const baseQuestions = [
             Object.entries(exportData).forEach(([key, value]) => {
                 params.append(key, value);
             });
+            
+            console.log('Final params being sent:', params.toString());
 
             fetch(GOOGLE_APPS_SCRIPT_URL, {
                 method: 'POST',
@@ -907,7 +971,6 @@ const baseQuestions = [
                     const mascotCard = document.createElement('div');
                     mascotCard.className = `mascot-card ${isUserMascot ? `highlighted highlighted-${key}` : ''}`;
                     mascotCard.innerHTML = `
-                        <div class="mascot-emoji">${m.emoji}</div>
                         <div class="mascot-name">${m.name}</div>
                         <div class="mascot-description">${m.description}</div>
                         ${isUserMascot ? '<div class="user-mascot-badge">IT\'S YOU!</div>' : ''}
