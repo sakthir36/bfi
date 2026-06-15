@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
+* {
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 :root{
     --primary-1: #667eea;
     --primary-2: #764ba2;
@@ -555,6 +559,12 @@ body {
     font-size: 3em;
 }
 
+.theme-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
 .theme-name {
     font-size: 0.95rem;
     text-align: center;
@@ -581,6 +591,10 @@ body {
 
 .theme-card.selected .theme-name {
     color: white;
+}
+
+.theme-card.selected .theme-icon {
+    filter: brightness(0) invert(1);
 }
 
 
@@ -869,29 +883,241 @@ body {
     transform: translateY(-1px);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+
     .container {
         padding: 20px;
+        border-radius: 16px;
     }
     
     .header h1 {
-        font-size: 1.8em;
+        font-size: 2em;
+        margin-bottom: 8px;
+    }
+
+    .header .subtitle {
+        font-size: 0.95rem;
     }
     
     .question-text {
         font-size: 1.1em;
+        margin-bottom: 16px;
+    }
+
+    .question-card {
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+
+    .options {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .option-btn {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+    }
+
+    .option-btn .dot {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9em;
+    }
+
+    .theme-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .theme-card {
+        padding: 20px;
+        gap: 10px;
+    }
+
+    .theme-name {
+        font-size: 0.9rem;
+    }
+
+    .theme-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .health-scale-buttons {
+        gap: 8px;
+    }
+
+    .scale-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
     }
     
     .mascot-emoji-large {
-        font-size: 3em;
+        font-size: 3.5em;
     }
     
     .mascot-name-large {
         font-size: 1.5em;
     }
+
+    .mascot-description-large {
+        font-size: 1em;
+    }
     
     .mascots-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .mascot-card {
+        padding: 20px 16px;
+        min-height: 240px;
+        border-radius: 12px;
+    }
+
+    .mascot-name {
+        font-size: 1.1em;
+        margin-bottom: 12px;
+    }
+
+    .mascot-description {
+        font-size: 0.85em;
+        line-height: 1.4;
+    }
+
+    .nav-buttons {
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        flex: 1;
+    }
+
+    .progress-container {
+        margin: 20px 0;
+    }
+
+    .progress-bar {
+        height: 24px;
+    }
+
+    .progress-percentage {
+        font-size: 0.8em;
+        right: 8px;
+    }
+
+    .health-card {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+
+    .health-question {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+
+    .health-answer {
+        font-size: 0.85em;
+    }
+
+    .quiz-history-question {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .quiz-history-question .question-text {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+
+    .health-option-label {
+        padding: 12px 14px;
+        gap: 10px;
+        font-size: 0.95rem;
+    }
+
+    .health-option-label input[type="radio"],
+    .health-option-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .start-btn {
+        padding: 11px 28px;
+        font-size: 1rem;
+        margin-top: 16px;
+    }
+
+    .export-btn {
+        padding: 12px 32px;
+        font-size: 1rem;
+    }
+
+    .consent-dialog {
+        padding: 30px 20px;
+        max-width: 90%;
+    }
+
+    .consent-header h2 {
+        font-size: 1.4em;
+    }
+
+    .consent-content > p {
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
+
+    .consent-buttons {
+        flex-direction: column;
+    }
+
+    .btn-decline,
+    .btn-agree {
+        width: 100%;
+    }
+
+    .all-mascots-section h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .trait-card {
+        padding: 14px;
+        margin-bottom: 10px;
+    }
+
+    .trait-name {
+        font-size: 1.1em;
+    }
+
+    .trait-score {
+        font-size: 1.3em;
+    }
+
+    .trait-bar {
+        height: 18px;
+    }
+
+    .health-section {
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    .health-section h2 {
+        font-size: 1.3em;
+        margin-bottom: 20px;
+    }
+
+    .health-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 }
 
