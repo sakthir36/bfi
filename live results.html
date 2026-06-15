@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Results - BFI</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { padding: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .results-page { max-width: 1200px; margin: 0 auto; }
+        .results-page h1 { color: #fff; font-size: 32px; margin-bottom: 32px; font-weight: 700; }
+        /* consolidated layout */
+        .traits-grid { display: flex; flex-direction: column; gap: 24px; padding-bottom: 8px; }
+        .results-page .trait-card { display: flex; align-items: center; gap: 16px; background: none; border: none; padding: 0; margin-bottom: 0; box-shadow: none; }
+        .trait-label { min-width: 120px; font-weight: 600; font-size: 13px; color: #333; text-align: left; }
+        .trait-perc { font-weight: 700; font-size: 18px; color: #667eea; min-width: 40px; text-align: right; }
+        .bar-horizontal { flex: 1; height: 40px; background: #e8e8e8; border-radius: 8px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .bar-fill { height: 100%; width: 0%; background: #76c7c0; border-radius: 6px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Average Scores Section */
+        .responses-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .responses-section h2 {
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .responses-empty {
+            text-align: center;
+            padding: 32px;
+            color: #999;
+        }
+        
+        .responses-loading {
+            text-align: center;
+            padding: 16px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .view-fallback { margin-top: 18px; }
+        .btn { display: inline-block; padding: 8px 14px; background:#333; color:#fff; text-decoration:none; border-radius:6px; margin-right:8px; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <main class="results-page">
+        <h1>Survey Results Dashboard</h1>
+        
+        <!-- Average Trait Scores Section -->
+        <div class="responses-section">
+            <h2>Average Trait Scores Across All Responses</h2>
+            <div id="averageScoresContainer" class="traits-grid">
+                <div class="responses-loading">Loading average scores...</div>
+            </div>
+        </div>
+        
+        <div class="view-fallback">
+            <a class="btn" href="index.html">Return to Quiz</a>
+        </div>
+    </main>
+
+    <script>// Average Scores Section
+        (function() {
+            const avgContainer = document.getElementById('averageScoresContainer');
+            const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTAz1S_UlkCujgoVnDWPSBST2gzzUYu6xiHFGYFICLlTSh7La2tW_q7MNADI48MWfI/exec";
+
+            const traits = {
+                E: { name: 'Extraversion', emoji: '🎉', color: '#FF6B6B' },
+                A: { name: 'Agreeableness', emoji: '🤝', color: '#00B4DB' },
+                C: { name: 'Conscientiousness', emoji: '📋', color: '#FFD89B' },
+                N: { name: 'Neuroticism', emoji: '😰', color: '#C061F0' },
+                O: { name: 'Open-Mindedness', emoji: '🌟', color: '#11998E' }
+            };
+
+            function calculateAverageScores(responses) {
+                if (!responses || responses.length === 0) {
+                    return null;
+                }
+
+                const totals = {
+                    E: 0,
+                    A: 0,
+                    C: 0,
+                    N: 0,
+                    O: 0
+                };
+
+                responses.forEach(row => {
+                    totals.E += parseFloat(row.extraversion) || 0;
+                    totals.A += parseFloat(row.agreeableness) || 0;
+                    totals.C += parseFloat(row.conscientiousness) || 0;
+                    totals.N += parseFloat(row.neuroticism) || 0;
+                    totals.O += parseFloat(row.open_mindedness) || 0;
+                });
+
+                const averages = {};
+                Object.keys(totals).forEach(key => {
+                    const avg = totals[key] / responses.length;
+                    // Scale for 1-15 range: ((score - 1) / 14) * 100
+                    const percentage = ((avg - 1) / 14) * 100;
+                    averages[key] = {
+                        score: avg.toFixed(2),
+                        displayScore: avg.toFixed(2),
+                        percentage: Math.max(0, Math.min(100, percentage)),
+                        name: traits[key].name,
+                        emoji: traits[key].emoji,
+                        color: traits[key].color
+                    };
+                });
+
+                return averages;
+            }
+
+            let barsInitialized = false;
+
+            function renderAverageScores(responses) {
+                const averages = calculateAverageScores(responses);
+                
+                if (!averages) {
+                    avgContainer.innerHTML = '<div class="responses-empty">No responses submitted yet.</div>';
+                    barsInitialized = false;
+                    return;
+                }
+
+                // First time: Create the bars
+                if (!barsInitialized) {
+                    let html = '';
+                    Object.keys(averages).forEach(key => {
+                        const trait = averages[key];
+                        const barWidth = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
+                        html += `
+                            <div class="trait-card">
+                                <div class="trait-label">${trait.name}</div>
+                                <div class="bar-horizontal" aria-hidden="true">
+                                    <div class="bar-fill" data-trait="${key}" style="width:${barWidth}%;background:${trait.color}"></div>
+                                </div>
+                                <div class="trait-perc" data-trait="${key}">${trait.displayScore}</div>
+                            </div>
+                        `;
+                    });
+                    avgContainer.innerHTML = html;
+                    barsInitialized = true;
+                    return;
+                }
+
+                // Subsequent updates: Just update the bar widths and scores
+                Object.keys(averages).forEach(key => {
+                    const trait = averages[key];
+                    const barWidth = (trait.percentage < 0) ? 0 : Math.min(100, trait.percentage);
+                    
+                    // Update score display
+                    const scoreEl = avgContainer.querySelector(`[data-trait="${key}"].trait-perc`);
+                    if (scoreEl) scoreEl.textContent = trait.displayScore;
+                    
+                    // Update bar width - this triggers the CSS transition
+                    const barEl = avgContainer.querySelector(`.bar-fill[data-trait="${key}"]`);
+                    if (barEl) barEl.style.width = barWidth + '%';
+                });
+            }
+
+            async function fetchAndDisplayAverages() {
+                if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                    avgContainer.innerHTML = '<div class="responses-empty">Google Sheets integration not configured.</div>';
+                    return;
+                }
+
+                try {
+                    const url = new URL(GOOGLE_APPS_SCRIPT_URL);
+                    url.searchParams.append('action', 'getResponses');
+                    url.searchParams.append('_t', Date.now());
+                    
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        cache: 'no-store'
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                    const data = await response.json();
+                    console.log('Raw data from Google Sheets:', data);
+                    
+                    if (!data || !Array.isArray(data.responses) || data.responses.length === 0) {
+                        avgContainer.innerHTML = '<div class="responses-empty">No responses submitted yet. Check back soon!</div>';
+                        return;
+                    }
+                    
+                    console.log('First response data:', data.responses[0]);
+                    renderAverageScores(data.responses);
+                } catch (error) {
+                    console.error('Error fetching average scores:', error);
+                    avgContainer.innerHTML = '<div class="responses-empty">Unable to load average scores.</div>';
+                }
+            }
+
+            // Initial fetch
+            fetchAndDisplayAverages();
+
+            // Poll for updates every 5 seconds
+            setInterval(fetchAndDisplayAverages, 1000);
+        })();
+    </script>
+</body>
+</html>
