@@ -103,7 +103,7 @@ const baseQuestions = [
                 question: "How important is breast cancer screening to you personally?",
                 type: "scale",
                 scale: 5,
-                scaleLabels: ["Not important leh", "Super important liao"],
+                scaleLabels: ["Not important", "Very important"],
                 condition: (responses) => responses["gender"] === "Female"
             },
             {
@@ -132,7 +132,7 @@ const baseQuestions = [
                 question: "How would you rate the discomfort experienced?",
                 type: "scale",
                 scale: 5,
-                scaleLabels: ["Not uncomfortable one", "Very uncomfortable liao"],
+                scaleLabels: ["Not uncomfortable", "Very uncomfortable"],
                 condition: (responses) => responses["gender"] === "Female" && responses["mammogram_before"] === "Yes"
             },
             {
@@ -147,7 +147,7 @@ const baseQuestions = [
                 question: "How important is colorectal cancer screening to you personally?",
                 type: "scale",
                 scale: 5,
-                scaleLabels: ["Not important leh", "Super important liao"],
+                scaleLabels: ["Not important", "Very important"],
                 condition: (responses) => responses["gender"] === "Male"
             },
             {
