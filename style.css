@@ -598,9 +598,20 @@ body {
 }
 
 
+/* Traits section */
+.traits-section {
+    margin-bottom: 40px;
+}
 
-/* Mascot main section */
-.mascot-main-section {
+.traits-section h2 {
+    text-align: center;
+    color: #667eea;
+    font-size: 1.8em;
+    margin-bottom: 30px;
+}
+
+/* Themed main section */
+.themed-main-section {
     border-radius: 14px;
     padding: 28px;
     color: white;
@@ -609,55 +620,45 @@ body {
     box-shadow: 0 14px 40px rgba(31,31,58,0.08);
 }
 
-.mascot-main {
+.themed-main {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
 }
 
-.mascot-emoji-large {
-    font-size: 4.2em;
-    animation: floaty 2.4s ease-in-out infinite;
-}
-
-.mascot-name-large {
+.themed-name-large {
     font-size: 2em;
     font-weight: bold;
 }
 
-.mascot-description-large {
+.themed-description-large {
     font-size: 1.1em;
     line-height: 1.6;
     max-width: 600px;
 }
 
-/* Traits section */
-.traits-section {
-    margin-bottom: 40px;
-}
-
-/* All mascots section */
-.all-mascots-section {
+/* All traits section */
+.all-traits-section {
     margin-top: 50px;
     padding-top: 40px;
     border-top: 3px solid #e0e0e0;
 }
 
-.all-mascots-section h2 {
+.all-traits-section h2 {
     text-align: center;
     color: #667eea;
     font-size: 1.8em;
     margin-bottom: 30px;
 }
 
-.mascots-grid {
+.traits-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
 }
 
-.mascot-card {
+.trait-card-friends {
     background: #f8f9fa;
     border: 2px solid #e0e0e0;
     border-radius: 15px;
@@ -672,132 +673,81 @@ body {
     align-items: center;
 }
 
-.mascot-card:hover {
+.trait-card-friends:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
 }
 
-.mascot-card.highlighted {
+.trait-card-friends.highlighted {
     color: white;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Extraversion - Party Lion - Red/Orange */
-.mascot-card.highlighted-E {
+/* Extraversion - Red/Orange */
+.trait-card-friends.highlighted-E {
     background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
     border-color: #FF6B6B;
 }
 
-.mascot-card.highlighted-E .mascot-name {
-    color: white;
-}
-
-.mascot-card.highlighted-E .mascot-description {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.mascot-card.highlighted-E .user-mascot-badge {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-}
-
-/* Agreeableness - Chill Otter - Teal */
-.mascot-card.highlighted-A {
+/* Agreeableness - Teal */
+.trait-card-friends.highlighted-A {
     background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);
     border-color: #00B4DB;
 }
 
-.mascot-card.highlighted-A .mascot-name {
-    color: white;
-}
-
-.mascot-card.highlighted-A .mascot-description {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.mascot-card.highlighted-A .user-mascot-badge {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-}
-
-/* Conscientiousness - Boss Bee - Gold */
-.mascot-card.highlighted-C {
+/* Conscientiousness - Gold */
+.trait-card-friends.highlighted-C {
     background: linear-gradient(135deg, #FFD89B 0%, #FFC92A 100%);
     border-color: #FFC92A;
 }
 
-.mascot-card.highlighted-C .mascot-name {
+.trait-card-friends.highlighted-C .trait-card-name,
+.trait-card-friends.highlighted-C .trait-card-description {
     color: #333;
 }
 
-.mascot-card.highlighted-C .mascot-description {
-    color: #333;
-}
-
-.mascot-card.highlighted-C .user-mascot-badge {
+.trait-card-friends.highlighted-C .user-trait-badge {
     background: rgba(0, 0, 0, 0.1);
     color: #333;
 }
 
-/* Neuroticism - Kiasu Kitten - Purple/Pink */
-.mascot-card.highlighted-N {
+/* Neuroticism - Purple/Pink */
+.trait-card-friends.highlighted-N {
     background: linear-gradient(135deg, #C061F0 0%, #E75480 100%);
     border-color: #C061F0;
 }
 
-.mascot-card.highlighted-N .mascot-name {
-    color: white;
-}
-
-.mascot-card.highlighted-N .mascot-description {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.mascot-card.highlighted-N .user-mascot-badge {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-}
-
-/* Openness - Curious Monkey - Green */
-.mascot-card.highlighted-O {
+/* Openness - Green */
+.trait-card-friends.highlighted-O {
     background: linear-gradient(135deg, #11998E 0%, #38EF7D 100%);
     border-color: #11998E;
 }
 
-.mascot-card.highlighted-O .mascot-name {
-    color: white;
+.trait-card-emoji {
+    font-size: 3em;
+    margin-bottom: 15px;
 }
 
-.mascot-card.highlighted-O .mascot-description {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.mascot-card.highlighted-O .user-mascot-badge {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-}
-
-.mascot-name {
+.trait-card-name {
     font-weight: bold;
     font-size: 1.2em;
     margin-bottom: 15px;
-    margin-top: 0;
     color: #333;
 }
 
-.mascot-description {
+.trait-card-description {
     font-size: 0.9em;
     line-height: 1.5;
     color: #666;
     flex-grow: 1;
 }
 
-.user-mascot-badge {
+.user-trait-badge {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #fff;
-    color: #333;
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
     padding: 5px 12px;
     border-radius: 20px;
     font-weight: bold;
@@ -883,19 +833,25 @@ body {
     transform: translateY(-1px);
 }
 
+@media (max-width: 1024px) {
+    .traits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     body {
-        padding: 16px;
+        padding: 12px;
     }
 
     .container {
-        padding: 20px;
-        border-radius: 16px;
+        padding: 16px;
+        border-radius: 12px;
     }
     
     .header h1 {
-        font-size: 2em;
-        margin-bottom: 8px;
+        font-size: 1.8em;
+        margin-bottom: 6px;
     }
 
     .header .subtitle {
@@ -956,39 +912,6 @@ body {
         height: 45px;
         font-size: 1rem;
     }
-    
-    .mascot-emoji-large {
-        font-size: 3.5em;
-    }
-    
-    .mascot-name-large {
-        font-size: 1.5em;
-    }
-
-    .mascot-description-large {
-        font-size: 1em;
-    }
-    
-    .mascots-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-
-    .mascot-card {
-        padding: 20px 16px;
-        min-height: 240px;
-        border-radius: 12px;
-    }
-
-    .mascot-name {
-        font-size: 1.1em;
-        margin-bottom: 12px;
-    }
-
-    .mascot-description {
-        font-size: 0.85em;
-        line-height: 1.4;
-    }
 
     .nav-buttons {
         gap: 8px;
@@ -1025,6 +948,47 @@ body {
 
     .health-answer {
         font-size: 0.85em;
+    }
+
+    .all-traits-section {
+        margin-top: 30px;
+        padding-top: 30px;
+    }
+
+    .all-traits-section h2 {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+    }
+
+    .traits-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .trait-card-friends {
+        padding: 20px 16px;
+        min-height: 220px;
+        border-radius: 12px;
+    }
+
+    .trait-card-emoji {
+        font-size: 2.5em;
+        margin-bottom: 12px;
+    }
+
+    .trait-card-name {
+        font-size: 1.1em;
+        margin-bottom: 12px;
+    }
+
+    .trait-card-description {
+        font-size: 0.85em;
+        line-height: 1.4;
+    }
+
+    .user-trait-badge {
+        font-size: 0.75em;
+        padding: 4px 10px;
     }
 
     .quiz-history-question {
@@ -1083,26 +1047,76 @@ body {
         width: 100%;
     }
 
-    .all-mascots-section h2 {
-        font-size: 1.5em;
-        margin-bottom: 20px;
+    .trait-card {
+        padding: 12px;
+        margin-bottom: 8px;
     }
 
-    .trait-card {
-        padding: 14px;
-        margin-bottom: 10px;
+    .trait-header {
+        flex-direction: column;
+        gap: 8px;
     }
 
     .trait-name {
-        font-size: 1.1em;
+        font-size: 1rem;
     }
 
     .trait-score {
+        font-size: 1.1em;
+    }
+
+    .emoji {
         font-size: 1.3em;
+        margin-right: 6px;
     }
 
     .trait-bar {
-        height: 18px;
+        height: 16px;
+        margin-bottom: 8px;
+    }
+
+    .trait-description {
+        font-size: 0.85em;
+        line-height: 1.4;
+    }
+
+    .traits-section h2 {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+    }
+
+    .themed-main-section {
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    .themed-name-large {
+        font-size: 1.4em;
+    }
+
+    .themed-description-large {
+        font-size: 0.95em;
+    }
+
+    .trait-card-friends {
+        padding: 18px 14px;
+        min-height: 200px;
+        border-radius: 10px;
+    }
+
+    .trait-card-emoji {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+    }
+
+    .trait-card-name {
+        font-size: 1em;
+        margin-bottom: 10px;
+    }
+
+    .trait-card-description {
+        font-size: 0.8em;
+        line-height: 1.3;
     }
 
     .health-section {
@@ -1118,6 +1132,302 @@ body {
     .health-grid {
         grid-template-columns: 1fr;
         gap: 12px;
+    }
+}
+
+/* Extra small screens - mobile phones */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 12px;
+        border-radius: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.5em;
+        margin-bottom: 4px;
+    }
+
+    .header .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .intro-content {
+        font-size: 0.95em;
+    }
+
+    .intro-content ul {
+        margin: 12px 0;
+        padding-left: 18px;
+    }
+
+    .intro-content li {
+        font-size: 0.9em;
+        margin: 6px 0;
+    }
+
+    .start-btn {
+        padding: 10px 24px;
+        font-size: 0.95rem;
+        margin-top: 12px;
+    }
+
+    .question-card {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .question-number {
+        font-size: 0.9em;
+    }
+
+    .question-text {
+        font-size: 1em;
+        margin-bottom: 12px;
+    }
+
+    .options {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .option-btn {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .option-btn .dot {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85em;
+    }
+
+    .nav-buttons {
+        gap: 6px;
+    }
+
+    .btn {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    .progress-container {
+        margin: 16px 0;
+    }
+
+    .progress-bar {
+        height: 20px;
+    }
+
+    .progress-percentage {
+        font-size: 0.75em;
+        right: 6px;
+    }
+
+    .theme-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .theme-card {
+        padding: 16px;
+        gap: 8px;
+    }
+
+    .theme-name {
+        font-size: 0.85rem;
+    }
+
+    .theme-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .quiz-history-question {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+
+    .quiz-history-question .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+    }
+
+    .radio-label {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .health-scale-buttons {
+        gap: 6px;
+    }
+
+    .scale-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .trait-card {
+        padding: 10px;
+        margin-bottom: 6px;
+    }
+
+    .trait-header {
+        gap: 6px;
+    }
+
+    .trait-name {
+        font-size: 0.95rem;
+    }
+
+    .trait-score {
+        font-size: 1em;
+    }
+
+    .emoji {
+        font-size: 1.2em;
+        margin-right: 4px;
+    }
+
+    .trait-bar {
+        height: 14px;
+        margin-bottom: 6px;
+    }
+
+    .trait-description {
+        font-size: 0.8em;
+        line-height: 1.3;
+    }
+
+    .traits-section h2 {
+        font-size: 1.2em;
+        margin-bottom: 16px;
+    }
+
+    .traits-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .trait-card-friends {
+        padding: 16px 12px;
+        min-height: 180px;
+        border-radius: 10px;
+    }
+
+    .trait-card-emoji {
+        font-size: 2em;
+        margin-bottom: 8px;
+    }
+
+    .trait-card-name {
+        font-size: 0.95em;
+        margin-bottom: 8px;
+    }
+
+    .trait-card-description {
+        font-size: 0.75em;
+        line-height: 1.2;
+    }
+
+    .user-trait-badge {
+        font-size: 0.7em;
+        padding: 3px 8px;
+    }
+
+    .all-traits-section {
+        margin-top: 24px;
+        padding-top: 20px;
+    }
+
+    .all-traits-section h2 {
+        font-size: 1.2em;
+        margin-bottom: 16px;
+    }
+
+    .themed-main-section {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .themed-name-large {
+        font-size: 1.2em;
+    }
+
+    .themed-description-large {
+        font-size: 0.9em;
+    }
+
+    .view-results-page-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .view-results-page-btn,
+    .btn {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .consent-dialog {
+        padding: 20px 16px;
+        max-width: 95%;
+    }
+
+    .consent-header h2 {
+        font-size: 1.2em;
+    }
+
+    .consent-content > p {
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+
+    .consent-content ul {
+        padding-left: 16px;
+    }
+
+    .consent-content li {
+        font-size: 0.85em;
+        margin: 4px 0;
+    }
+
+    .btn-decline,
+    .btn-agree {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    .health-option-label {
+        padding: 10px 12px;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    .health-option-label input[type="radio"],
+    .health-option-label input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+    }
+
+    .health-section {
+        padding: 16px;
+        margin-top: 24px;
+    }
+
+    .health-section h2 {
+        font-size: 1.2em;
+        margin-bottom: 16px;
+    }
+
+    .health-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 }
 

@@ -47,42 +47,12 @@ const baseQuestions = [
             { text: "Aiyo, no way liao", value: 1 }
         ];
 
-        const mascots = {
-            E: {
-                name: 'Party Lion',
-                emoji: '🦁',
-                description: 'Wah, you damn happening lah! Super outgoing, damn shiok to hang with one.',
-                color: '#FF6B6B',
-                colorLight: '#FF8E53'
-            },
-            A: {
-                name: 'Chill Otter',
-                emoji: '🦦',
-                description: 'Steady lah you! Very nice person, always help people and don\'t like to quarrel.',
-                color: '#00B4DB',
-                colorLight: '#0083B0'
-            },
-            C: {
-                name: 'Boss Bee',
-                emoji: '🐝',
-                description: 'Wah you very on one! Super organized, can always count on you to chiong and finish everything.',
-                color: '#FFD89B',
-                colorLight: '#FFC92A'
-            },
-            N: {
-                name: 'Kiasu Kitten',
-                emoji: '🐱',
-                description: 'You quite kiasu leh! But that means you care a lot and always think carefully about things.',
-                color: '#C061F0',
-                colorLight: '#E75480'
-            },
-            O: {
-                name: 'Curious Monkey',
-                emoji: '🐵',
-                description: 'Wah you very creative sia! Always got new ideas and like to try different things.',
-                color: '#11998E',
-                colorLight: '#38EF7D'
-            }
+        const traitColors = {
+            E: { color: '#FF6B6B', colorLight: '#FF8E53' },
+            A: { color: '#00B4DB', colorLight: '#0083B0' },
+            C: { color: '#FFD89B', colorLight: '#FFC92A' },
+            N: { color: '#C061F0', colorLight: '#E75480' },
+            O: { color: '#11998E', colorLight: '#38EF7D' }
         };
 
         const healthScreeningQuestions = [
@@ -199,21 +169,21 @@ const baseQuestions = [
             disney_princesses: {
                 name: 'Disney Princesses',
                 characters: {
-                    O: { name: 'Belle', description: 'You\'re like Belle - creative, curious, and love learning new things. You see the world through a unique lens and aren\'t afraid to be different!' },
-                    C: { name: 'Mulan', description: 'You\'re like Mulan - disciplined, responsible, and determined. You tackle challenges head-on and always see things through to the end.' },
-                    E: { name: 'Cinderella', description: 'You\'re like Cinderella - outgoing, charismatic, and the life of the party. People are drawn to your energy and enthusiasm!' },
-                    A: { name: 'Snow White', description: 'You\'re like Snow White - kind-hearted, caring, and compassionate. You bring warmth and harmony to everyone around you.' },
-                    N: { name: 'Ariel', description: 'You\'re like Ariel - sensitive, introspective, and deeply emotional. You feel things intensely and care deeply about others.' }
+                    O: { name: 'Belle', description: "You very very curious! You got see the world through a unique lens one. You also very creative one, not afraid to be different from everyone else." },
+                    C: { name: 'Mulan', description: "Any challenge, you tackle head-on one! Everything you do, you always see things through to the end. You never chao keng lah!" },
+                    E: { name: 'Cinderella', description: "Wah, you very social! You also very enthu, any party without you incomplete liao. Your energy got draw lots of people to you one." },
+                    A: { name: 'Snow White', description: "So kind! You very caring one. Anyone around you can feel the warmth you bring lah!" },
+                    N: { name: 'Ariel', description: "You super introspective one! Emotions, you got feel intensely liao. A bit sensitive, but that’s okay lah." }
                 }
             },
             animals: {
                 name: 'Animals',
                 characters: {
-                    O: { name: 'Monkey', description: 'You\'re like a Monkey - curious, creative, and always exploring new possibilities. You love trying new things and thinking outside the box!' },
-                    C: { name: 'Bee', description: 'You\'re like a Bee - organized, hardworking, and reliable. You\'re focused on getting things done efficiently and helping others.' },
-                    E: { name: 'Lion', description: 'You\'re like a Lion - bold, confident, and commanding. You inspire others with your charisma and natural leadership!' },
-                    A: { name: 'Otter', description: 'You\'re like an Otter - friendly, social, and warm-hearted. You bring joy and harmony to your relationships with others.' },
-                    N: { name: 'Cat', description: 'You\'re like a Cat - sensitive, thoughtful, and perceptive. You pick up on subtle things and care deeply about your environment.' }
+                    O: { name: 'Monkey', description: "Wah, you very curious one! Always got new ideas, never afraid to try new things liao." },
+                    C: { name: 'Bee', description: "You very on one! Your work, you never anyhow do one; always chiong and on top of your things." },
+                    E: { name: 'Lion', description: "Wah, you damn happening lah! Super shiok to hang out with you, you very outgoing and charismatic one." },
+                    A: { name: 'Otter', description: "You really chill lah! You very very warm-hearted and never quarrel one." },
+                    N: { name: 'Cat', description: "You a bit kiasu liao, but it's okay lah! You feel things very intensely one. Your peers you care very deeply for also." }
                 }
             },
             nucleotide_bases: {
@@ -697,8 +667,8 @@ const baseQuestions = [
                     percentage: ((total - 3) / 12) * 100,
                     name: traits[key].name,
                     emoji: traits[key].emoji,
-                    color: mascots[key].color,
-                    colorLight: mascots[key].colorLight
+                    color: traitColors[key].color,
+                    colorLight: traitColors[key].colorLight
                 };
             });
             return results;
@@ -862,7 +832,6 @@ const baseQuestions = [
         function showResults() {
             const results = calculateScores();
             const dominantTrait = getDominantTrait(results);
-            const mascot = mascots[dominantTrait];
 
             // Store globally
             lastResults = results;
@@ -880,32 +849,21 @@ const baseQuestions = [
             // Check if a theme was selected
             const themedCharacter = selectedTheme && themes[selectedTheme] ? themes[selectedTheme].characters[dominantTrait] : null;
 
-            // Main mascot/character section
-            const mascotSection = document.createElement('div');
-            mascotSection.className = `mascot-main-section highlighted highlighted-${dominantTrait}`;
-            mascotSection.style.background = `linear-gradient(135deg, ${mascots[dominantTrait].color} 0%, ${mascots[dominantTrait].colorLight} 100%)`;
-            
-            if (themedCharacter) {
-                // Display themed character
-                mascotSection.innerHTML = `
-                    <div class="mascot-main">
-                        <div class="mascot-name-large">${themedCharacter.name}</div>
-                        <div class="mascot-description-large">${themedCharacter.description}</div>
+            // Main themed character section (if theme selected)
+            if (themedCharacter && selectedTheme && themes[selectedTheme]) {
+                const themedSection = document.createElement('div');
+                themedSection.className = `themed-main-section highlighted highlighted-${dominantTrait}`;
+                themedSection.style.background = `linear-gradient(135deg, ${traitColors[dominantTrait].color} 0%, ${traitColors[dominantTrait].colorLight} 100%)`;
+                themedSection.innerHTML = `
+                    <div class="themed-main">
+                        <div class="themed-name-large">${themedCharacter.name}</div>
+                        <div class="themed-description-large">${themedCharacter.description}</div>
                     </div>
                 `;
-            } else {
-                // Display default mascot
-                mascotSection.innerHTML = `
-                    <div class="mascot-main">
-                        <div class="mascot-emoji-large">${mascot.emoji}</div>
-                        <div class="mascot-name-large">${mascot.name}</div>
-                        <div class="mascot-description-large">${mascot.description}</div>
-                    </div>
-                `;
+                container.appendChild(themedSection);
             }
-            container.appendChild(mascotSection);
 
-            // Combined trait scores
+            // Trait scores
             const averageResults = getAverageResults(results);
             const averageTraitsSection = document.createElement('div');
             averageTraitsSection.className = 'traits-section';
@@ -924,7 +882,7 @@ const baseQuestions = [
                         <div class="trait-score">${trait.percentage.toFixed(0)}%</div>
                     </div>
                     <div class="trait-bar">
-                        <div class="trait-bar-fill" style="width: ${trait.percentage}%"></div>
+                        <div class="trait-bar-fill" style="width: ${trait.percentage}%; background: linear-gradient(90deg, ${trait.color}, ${trait.colorLight});"></div>
                     </div>
                     <div class="trait-description">
                         ${getDescription(key, trait.percentage)}
@@ -934,20 +892,14 @@ const baseQuestions = [
             });
             container.appendChild(averageTraitsSection);
 
-            // Healthcare Screening Results section (hidden from display but data collected)
-            // const healthSection = document.createElement('div');
-            // healthSection.className = 'health-section';
-            // Removed from results display
+            // All traits section
+            const allTraitsSection = document.createElement('div');
+            allTraitsSection.className = 'all-traits-section';
+            allTraitsSection.innerHTML = '<h2>All your friends leh!</h2>';
 
-            // All mascots/characters section
-            const allMascotsSection = document.createElement('div');
-            allMascotsSection.className = 'all-mascots-section';
-            allMascotsSection.innerHTML = '<h2>All your friends leh!</h2>';
+            const traitsGrid = document.createElement('div');
+            traitsGrid.className = 'traits-grid';
 
-            const mascotsGrid = document.createElement('div');
-            mascotsGrid.className = 'mascots-grid';
-
-            // Check if a theme was selected
             if (themedCharacter && selectedTheme && themes[selectedTheme]) {
                 // Display theme-specific characters
                 const themeData = themes[selectedTheme];
@@ -955,32 +907,37 @@ const baseQuestions = [
                     const char = themeData.characters[key];
                     const isUserCharacter = key === dominantTrait;
                     const charCard = document.createElement('div');
-                    charCard.className = `mascot-card ${isUserCharacter ? `highlighted highlighted-${key}` : ''}`;
+                    charCard.className = `trait-card-friends ${isUserCharacter ? `highlighted highlighted-${key}` : ''}`;
+                    charCard.style.background = isUserCharacter ? `linear-gradient(135deg, ${traitColors[key].color} 0%, ${traitColors[key].colorLight} 100%)` : '#f8f9fa';
+                    charCard.style.color = isUserCharacter ? 'white' : '#333';
                     charCard.innerHTML = `
-                        <div class="mascot-name">${char.name}</div>
-                        <div class="mascot-description">${char.description}</div>
-                        ${isUserCharacter ? '<div class="user-mascot-badge">IT\'S YOU!</div>' : ''}
+                        <div class="trait-card-name">${char.name}</div>
+                        <div class="trait-card-description">${char.description}</div>
+                        ${isUserCharacter ? '<div class="user-trait-badge">IT\'S YOU!</div>' : ''}
                     `;
-                    mascotsGrid.appendChild(charCard);
+                    traitsGrid.appendChild(charCard);
                 });
             } else {
-                // Display default mascots
-                Object.keys(mascots).forEach(key => {
-                    const m = mascots[key];
-                    const isUserMascot = key === dominantTrait;
-                    const mascotCard = document.createElement('div');
-                    mascotCard.className = `mascot-card ${isUserMascot ? `highlighted highlighted-${key}` : ''}`;
-                    mascotCard.innerHTML = `
-                        <div class="mascot-name">${m.name}</div>
-                        <div class="mascot-description">${m.description}</div>
-                        ${isUserMascot ? '<div class="user-mascot-badge">IT\'S YOU!</div>' : ''}
+                // Display trait cards with emojis
+                Object.keys(averageResults).forEach(key => {
+                    const trait = averageResults[key];
+                    const isUserTrait = key === dominantTrait;
+                    const traitCard = document.createElement('div');
+                    traitCard.className = `trait-card-friends ${isUserTrait ? `highlighted highlighted-${key}` : ''}`;
+                    traitCard.style.background = isUserTrait ? `linear-gradient(135deg, ${trait.color} 0%, ${trait.colorLight} 100%)` : '#f8f9fa';
+                    traitCard.style.color = isUserTrait ? 'white' : '#333';
+                    traitCard.innerHTML = `
+                        <div class="trait-card-emoji">${trait.emoji}</div>
+                        <div class="trait-card-name">${trait.name}</div>
+                        <div class="trait-card-description">${getDescription(key, trait.percentage)}</div>
+                        ${isUserTrait ? '<div class="user-trait-badge">IT\'S YOU!</div>' : ''}
                     `;
-                    mascotsGrid.appendChild(mascotCard);
+                    traitsGrid.appendChild(traitCard);
                 });
             }
 
-            allMascotsSection.appendChild(mascotsGrid);
-            container.appendChild(allMascotsSection);
+            allTraitsSection.appendChild(traitsGrid);
+            container.appendChild(allTraitsSection);
 
             // Persist results so the separate results page can read them
             try {
@@ -1098,7 +1055,7 @@ const baseQuestions = [
                 const csvContent = [
                     ['Personality Quiz Results'],
                     ['Timestamp', new Date().toLocaleString()],
-                    ['Dominant Trait', mascots[lastDominantTrait].name],
+                    ['Dominant Trait', lastResults[lastDominantTrait].name],
                     [''],
                     ['Trait', 'Score', 'Percentage'],
                     ...Object.keys(lastResults).map(key => [
