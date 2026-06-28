@@ -1399,10 +1399,17 @@ body {
         margin: 4px 0;
     }
 
+    .consent-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+    }
+
     .btn-decline,
     .btn-agree {
-        padding: 10px 16px;
+        padding: 10px 14px;
         font-size: 0.9rem;
+        flex: 1;
     }
 
     .health-option-label {

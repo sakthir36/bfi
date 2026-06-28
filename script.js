@@ -189,31 +189,31 @@ const baseQuestions = [
             nucleotide_bases: {
                 name: 'Nucleotide Bases',
                 characters: {
-                    O: { name: 'Adenine', description: 'You\'re like Adenine - paired with creativity and imagination. You bring variety and novelty to everything you do!' },
-                    C: { name: 'Guanine', description: 'You\'re like Guanine - paired with structure and organization. You provide stability and ensure things are done right.' },
-                    E: { name: 'Cytosine', description: 'You\'re like Cytosine - energetic and dynamic. You connect with others and create excitement wherever you go!' },
-                    A: { name: 'Thymine', description: 'You\'re like Thymine - grounded and harmonious. You create balance and bring people together through your kindness.' },
-                    N: { name: 'Uracil', description: 'You\'re like Uracil - sensitive and aware. You notice nuances others miss and have a deep inner life.' }
+                    O: { name: 'Adenine', description: 'Wah, your brain always spinning with ideas lah! Cannot stop imagining new possibilities, always got some shiok chim thing going on in your head one.' },
+                    C: { name: 'Guanine', description: 'So systematic lah you! Everything must plan properly, organize until shiok, then execute flawlessly. Your friends depend on you for this kind of discipline sia.' },
+                    E: { name: 'Cytosine', description: 'Eh, you the life of the party lah! Any gathering got you, confirm more happening. People attracted to your energy like magnet one!' },
+                    A: { name: 'Thymine', description: 'Your heart so soft sia! You always thinking about others first, never selfish. The world needs more people like you leh.' },
+                    N: { name: 'Uracil', description: 'Aiyo, you carry a lot of feelings inside lah. Not easy to see from outside, but your emotions very deep. That why people feel comforted talking to you one.' }
                 }
             },
             singapore_dishes: {
                 name: 'Singaporean Dishes',
                 characters: {
-                    O: { name: 'Roti Prata', description: 'You\'re like Roti Prata - versatile, creative, and full of possibilities! You constantly adapt and reinvent yourself.' },
-                    C: { name: 'Chicken Rice', description: 'You\'re like Chicken Rice - reliable, classic, and always dependable. You\'re the person people can count on every time.' },
-                    E: { name: 'Nasi Lemak', description: 'You\'re like Nasi Lemak - bold, flavorful, and impossible to ignore! You bring excitement and energy to every situation.' },
-                    A: { name: 'Ice Kacang', description: 'You\'re like Ice Kacang - sweet, refreshing, and bring comfort to others. You make people feel good just by being around!' },
-                    N: { name: 'Chili Crab', description: 'You\'re like Chili Crab - complex, intense, and deeply feeling. You experience emotions on a deeper level than most.' }
+                    O: { name: 'Roti Prata', description: 'You can fold fold, change change, always got new flavor! Your creativity buay tahan, never get bored with you one.' },
+                    C: { name: 'Chicken Rice', description: 'Simple, straightforward, but very satisfying. People know what they getting with you, \'cause you reliable, no nonsense, but very trustworthy one.' },
+                    E: { name: 'Nasi Lemak', description: 'Wah lao, you bold and aromatic one, cannot ignore! You very prominent in any crowd, people always notice when you here or not.' },
+                    A: { name: 'Ice Kacang', description: 'Very cooling and comforting when someone need one. You got ability to make people smile just by your presence, very shiok lah.' },
+                    N: { name: 'Chili Crab', description: 'Look simple on outside, but inside got complex flavors and heat. Your emotions very nuanced, got many layers people don\'t always see one.' }
                 }
             },
             vehicles: {
                 name: 'Vehicles',
                 characters: {
-                    O: { name: 'Airplane', description: 'You\'re like an Airplane - always exploring new horizons and thinking big. You love experiencing new places and ideas!' },
-                    C: { name: 'Truck', description: 'You\'re like a Truck - solid, dependable, and hardworking. You get the job done no matter what it takes.' },
-                    E: { name: 'Motorbike', description: 'You\'re like a Motorbike - thrilling, adventurous, and full of energy! You bring excitement and speed to everything you do.' },
-                    A: { name: 'Car', description: 'You\'re like a Car - practical, reliable, and comfortable. People feel safe and happy being around you.' },
-                    N: { name: 'Train', description: 'You\'re like a Train - thoughtful about your path and aware of your surroundings. You move steadily through life with intention.' }
+                    O: { name: 'Airplane', description: 'Soaring high with imagination lah you! Your mind always traveling to places others haven\'t thought of yet. Very chim ideas, very buay tahan to follow sometimes one.' },
+                    C: { name: 'Truck', description: 'The workhorse type lah. Maybe not glamorous, but damn reliable sia. When people need something done properly, confirm they call you first.' },
+                    E: { name: 'Motorbike', description: 'Zoooom! That\'s you lah - fast, exciting, cannot slow down! Your energy very infectious sia, everyone want to go on a ride with you one.' },
+                    A: { name: 'Car', description: 'Like a comfy family car lah - safe, comfortable, everyone feel at home. Not trying to impress, just genuine nice person one.' },
+                    N: { name: 'Train', description: 'On its tracks lah you - know where you going, very purposeful. You take time to speed up but very steady and aware of surroundings one, quite contemplative sia.' }
                 }
             }
         };
