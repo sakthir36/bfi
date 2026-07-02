@@ -219,6 +219,8 @@ const baseQuestions = [
         };
 
         const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYZCGxB0OI7gao4bywVn3Cpak4yBa4HCnXaBOoLyEuwLFrHFKXURYpnVQi9GsFPpq3/exec";
+        const SUBMISSION_QUEUE_KEY = 'bfi_submission_queue';
+        const SUBMISSION_RETRY_DELAYS_MS = [1000, 3000, 7000];
         let currentQuestion = 0;
         let answers = new Array(15).fill(null);
         let lastResults = null;
@@ -226,6 +228,113 @@ const baseQuestions = [
         let confettiPlayed = false;
         let selectedTheme = null;
         let quizHistoryResponse = null;
+        let isSubmissionQueueProcessing = false;
+
+        function getQueuedSubmissions() {
+            try {
+                const raw = localStorage.getItem(SUBMISSION_QUEUE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.warn('Could not read submission queue', e);
+                return [];
+            }
+        }
+
+        function saveQueuedSubmissions(queue) {
+            try {
+                localStorage.setItem(SUBMISSION_QUEUE_KEY, JSON.stringify(queue));
+            } catch (e) {
+                console.warn('Could not persist submission queue', e);
+            }
+        }
+
+        function sendSubmissionRequest(payload) {
+            const params = new URLSearchParams();
+            params.append('action', payload.action || 'submission');
+            Object.entries(payload.data || {}).forEach(([key, value]) => {
+                params.append(key, String(value));
+            });
+
+            return fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: params.toString(),
+                keepalive: true
+            });
+        }
+
+        function queueSubmission(payload) {
+            if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                console.log('Google Sheets integration not configured. Queued data:', payload);
+                return;
+            }
+
+            const queue = getQueuedSubmissions();
+            queue.push({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                payload,
+                attempts: 0,
+                nextAttemptAt: Date.now() + Math.floor(Math.random() * 1200)
+            });
+            saveQueuedSubmissions(queue);
+            processSubmissionQueue();
+        }
+
+        function processSubmissionQueue() {
+            if (isSubmissionQueueProcessing) return;
+            isSubmissionQueueProcessing = true;
+
+            const processNext = () => {
+                const queue = getQueuedSubmissions();
+                if (!queue.length) {
+                    isSubmissionQueueProcessing = false;
+                    return;
+                }
+
+                const entry = queue[0];
+                if (entry.nextAttemptAt > Date.now()) {
+                    setTimeout(processNext, entry.nextAttemptAt - Date.now());
+                    return;
+                }
+
+                queue.shift();
+                saveQueuedSubmissions(queue);
+
+                sendSubmissionRequest(entry.payload)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                        return response.text();
+                    })
+                    .then(() => {
+                        console.log('Submission sent successfully');
+                    })
+                    .catch(error => {
+                        console.error('Submission failed, retrying later:', error);
+                        const retryQueue = getQueuedSubmissions();
+                        const retryEntry = {
+                            ...entry,
+                            attempts: entry.attempts + 1,
+                            nextAttemptAt: Date.now() + (SUBMISSION_RETRY_DELAYS_MS[entry.attempts] || SUBMISSION_RETRY_DELAYS_MS[SUBMISSION_RETRY_DELAYS_MS.length - 1]) + Math.floor(Math.random() * 1000)
+                        };
+
+                        if (retryEntry.attempts <= SUBMISSION_RETRY_DELAYS_MS.length) {
+                            retryQueue.push(retryEntry);
+                            saveQueuedSubmissions(retryQueue);
+                        } else {
+                            console.warn('Dropping submission after retries:', entry.payload);
+                        }
+                    })
+                    .finally(() => {
+                        setTimeout(processNext, 1000);
+                    });
+            };
+
+            processNext();
+        }
 
         // Health Screening state
         let currentHealthQuestion = 0;
@@ -442,17 +551,25 @@ const baseQuestions = [
         }
 
         function proceedToFinalResults() {
-            // Post health screening data to Google Sheets
             postHealthScreeningToSheet();
-            
-            // Show loading screen for 0.5 seconds before displaying final results
+
             document.querySelector('.health-screening-screen').classList.remove('active');
             document.querySelector('.loading-screen').classList.add('active');
-            
-            setTimeout(() => {
-                document.querySelector('.loading-screen').classList.remove('active');
-                showResults();
-            }, 500);
+
+            const checkSubmissionCompletion = () => {
+                const queue = getQueuedSubmissions();
+                const hasPendingWork = queue.some(entry => entry.nextAttemptAt <= Date.now() || entry.attempts < SUBMISSION_RETRY_DELAYS_MS.length);
+
+                if (!queue.length || !hasPendingWork) {
+                    document.querySelector('.loading-screen').classList.remove('active');
+                    showResults();
+                    return;
+                }
+
+                setTimeout(checkSubmissionCompletion, 500);
+            };
+
+            checkSubmissionCompletion();
         }
 
         function displayHealthQuestion() {
@@ -727,7 +844,7 @@ const baseQuestions = [
                 scores[key] = parseFloat(results[key].score.toFixed(2));
             });
 
-            console.log('Posting to Google Sheets - Trait Scores:', scores);
+            console.log('Queuing result submission for Google Sheets - Trait Scores:', scores);
 
             const exportData = {
                 timestamp: new Date().toLocaleString(),
@@ -740,29 +857,9 @@ const baseQuestions = [
                 quiz_history: quizHistoryResponse || 'not specified'
             };
 
-            if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
-                console.log('Google Sheets integration not configured. Results data:', exportData);
-                return;
-            }
-
-            const params = new URLSearchParams();
-            Object.entries(exportData).forEach(([key, value]) => {
-                params.append(key, value);
-            });
-
-            fetch(GOOGLE_APPS_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                body: params.toString()
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Results posted to Google Sheets');
-            })
-            .catch(error => {
-                console.error('Error posting to Google Sheets:', error);
+            queueSubmission({
+                action: 'results',
+                data: exportData
             });
         }
 
@@ -796,34 +893,11 @@ const baseQuestions = [
                 console.log('Male - colonoscopy_other_elaboration:', healthResponses.colonoscopy_other_elaboration);
             }
             
-            console.log('Export data to be sent:', exportData);
+            console.log('Export data queued for Google Sheets:', exportData);
 
-            if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
-                console.log('Google Sheets integration not configured. Health screening data:', exportData);
-                return;
-            }
-
-            const params = new URLSearchParams();
-            params.append('action', 'health_screening');
-            Object.entries(exportData).forEach(([key, value]) => {
-                params.append(key, value);
-            });
-            
-            console.log('Final params being sent:', params.toString());
-
-            fetch(GOOGLE_APPS_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                },
-                body: params.toString()
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Health screening data posted to Google Sheets');
-            })
-            .catch(error => {
-                console.error('Error posting health screening data to Google Sheets:', error);
+            queueSubmission({
+                action: 'health_screening',
+                data: exportData
             });
         }
 
