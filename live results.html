@@ -47,7 +47,20 @@
             font-weight: 600;
         }
         .view-fallback { margin-top: 18px; }
-        .btn { display: inline-block; padding: 8px 14px; background:#333; color:#fff; text-decoration:none; border-radius:6px; margin-right:8px; margin-top: 8px; }
+        .btn { display: inline-block; padding: 8px 14px; background:#333; color:#fff; text-decoration:none; border-radius:6px; margin-right:8px; margin-top: 8px; max-width: 100%; box-sizing: border-box; text-align: center; white-space: normal; }
+
+        @media (max-width: 480px) {
+            .view-fallback {
+                display: flex;
+                justify-content: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 260px;
+                margin-right: 0;
+            }
+        }
     </style>
 </head>
 <body>

@@ -304,6 +304,8 @@ body {
     margin-top: 40px;
     padding-top: 30px;
     border-top: 2px solid rgba(102, 126, 234, 0.2);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .view-results-page-btn {
@@ -315,6 +317,10 @@ body {
     text-decoration: none;
     display: inline-block;
     transition: all 0.22s cubic-bezier(.2,.9,.2,1);
+    text-align: center;
+    white-space: normal;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .view-results-page-btn:hover {
@@ -1367,13 +1373,16 @@ body {
     .view-results-page-wrapper {
         flex-direction: column;
         gap: 10px;
+        align-items: stretch;
     }
 
     .view-results-page-btn,
     .btn {
         width: 100%;
+        max-width: 100%;
         font-size: 0.9rem;
         padding: 10px;
+        box-sizing: border-box;
     }
 
     .consent-dialog {
