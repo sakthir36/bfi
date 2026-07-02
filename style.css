@@ -272,6 +272,11 @@ body {
     cursor: pointer;
     transition: transform .18s ease, box-shadow .18s ease;
     font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
 }
 
 .btn-prev {
