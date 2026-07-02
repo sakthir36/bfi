@@ -220,7 +220,9 @@ const baseQuestions = [
 
         const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxElNOQm3nk3ytHrO5QmYEfqwr_5VYtTf4TayJmlzj2emw-y0L2Ytq8Ma9kW7IK7Z88/exec";
         const SUBMISSION_QUEUE_KEY = 'bfi_submission_queue';
+        const SUBMISSION_FALLBACK_KEY = 'bfi_submission_fallback';
         const SUBMISSION_RETRY_DELAYS_MS = [1000, 3000, 7000];
+        const SUBMISSION_TIMEOUT_MS = 8000;
         let currentQuestion = 0;
         let answers = new Array(15).fill(null);
         let lastResults = null;
@@ -248,7 +250,25 @@ const baseQuestions = [
             }
         }
 
-        function sendSubmissionRequest(payload) {
+        function getSubmissionFallbacks() {
+            try {
+                const raw = localStorage.getItem(SUBMISSION_FALLBACK_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.warn('Could not read submission fallback queue', e);
+                return [];
+            }
+        }
+
+        function saveSubmissionFallbacks(fallbacks) {
+            try {
+                localStorage.setItem(SUBMISSION_FALLBACK_KEY, JSON.stringify(fallbacks));
+            } catch (e) {
+                console.warn('Could not persist submission fallback queue', e);
+            }
+        }
+
+        function sendSubmissionRequest(payload, signal) {
             const params = new URLSearchParams();
             params.append('action', payload.action || 'submission');
             Object.entries(payload.data || {}).forEach(([key, value]) => {
@@ -261,7 +281,8 @@ const baseQuestions = [
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 body: params.toString(),
-                keepalive: true
+                keepalive: true,
+                signal
             });
         }
 
@@ -272,13 +293,18 @@ const baseQuestions = [
             }
 
             const queue = getQueuedSubmissions();
-            queue.push({
+            const fallbackQueue = getSubmissionFallbacks();
+            const entry = {
                 id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
                 payload,
                 attempts: 0,
                 nextAttemptAt: Date.now() + Math.floor(Math.random() * 1200)
-            });
+            };
+
+            queue.push(entry);
+            fallbackQueue.push(payload);
             saveQueuedSubmissions(queue);
+            saveSubmissionFallbacks(fallbackQueue);
             processSubmissionQueue();
         }
 
@@ -289,6 +315,7 @@ const baseQuestions = [
             const processNext = () => {
                 const queue = getQueuedSubmissions();
                 if (!queue.length) {
+                    saveSubmissionFallbacks([]);
                     isSubmissionQueueProcessing = false;
                     return;
                 }
@@ -299,10 +326,18 @@ const baseQuestions = [
                     return;
                 }
 
-                queue.shift();
-                saveQueuedSubmissions(queue);
+                const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                const timeoutId = setTimeout(() => {
+                    if (controller) controller.abort();
+                }, SUBMISSION_TIMEOUT_MS);
 
-                sendSubmissionRequest(entry.payload)
+                const fallbackQueue = getSubmissionFallbacks();
+                if (!fallbackQueue.some(item => JSON.stringify(item) === JSON.stringify(entry.payload))) {
+                    fallbackQueue.push(entry.payload);
+                    saveSubmissionFallbacks(fallbackQueue);
+                }
+
+                sendSubmissionRequest(entry.payload, controller ? controller.signal : undefined)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP ${response.status}`);
@@ -311,6 +346,12 @@ const baseQuestions = [
                     })
                     .then(() => {
                         console.log('Submission sent successfully');
+                        const updatedQueue = getQueuedSubmissions();
+                        updatedQueue.shift();
+                        saveQueuedSubmissions(updatedQueue);
+
+                        const remainingFallbacks = getSubmissionFallbacks().filter(item => JSON.stringify(item) !== JSON.stringify(entry.payload));
+                        saveSubmissionFallbacks(remainingFallbacks);
                     })
                     .catch(error => {
                         console.error('Submission failed, retrying later:', error);
@@ -322,19 +363,33 @@ const baseQuestions = [
                         };
 
                         if (retryEntry.attempts <= SUBMISSION_RETRY_DELAYS_MS.length) {
-                            retryQueue.push(retryEntry);
+                            retryQueue[0] = retryEntry;
                             saveQueuedSubmissions(retryQueue);
+                            const fallbackQueue = getSubmissionFallbacks();
+                            if (!fallbackQueue.some(item => JSON.stringify(item) === JSON.stringify(retryEntry.payload))) {
+                                fallbackQueue.push(retryEntry.payload);
+                                saveSubmissionFallbacks(fallbackQueue);
+                            }
                         } else {
                             console.warn('Dropping submission after retries:', entry.payload);
+                            const remainingQueue = getQueuedSubmissions();
+                            remainingQueue.shift();
+                            saveQueuedSubmissions(remainingQueue);
+                            const remainingFallbacks = getSubmissionFallbacks().filter(item => JSON.stringify(item) !== JSON.stringify(entry.payload));
+                            saveSubmissionFallbacks(remainingFallbacks);
                         }
                     })
                     .finally(() => {
+                        clearTimeout(timeoutId);
                         setTimeout(processNext, 1000);
                     });
             };
 
             processNext();
         }
+
+        window.addEventListener('online', () => processSubmissionQueue());
+        window.addEventListener('pageshow', () => processSubmissionQueue());
 
         // Health Screening state
         let currentHealthQuestion = 0;
