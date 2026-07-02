@@ -218,7 +218,7 @@ const baseQuestions = [
             }
         };
 
-        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxYZCGxB0OI7gao4bywVn3Cpak4yBa4HCnXaBOoLyEuwLFrHFKXURYpnVQi9GsFPpq3/exec";
+        const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxElNOQm3nk3ytHrO5QmYEfqwr_5VYtTf4TayJmlzj2emw-y0L2Ytq8Ma9kW7IK7Z88/exec";
         const SUBMISSION_QUEUE_KEY = 'bfi_submission_queue';
         const SUBMISSION_RETRY_DELAYS_MS = [1000, 3000, 7000];
         let currentQuestion = 0;
