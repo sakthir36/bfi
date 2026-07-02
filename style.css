@@ -336,6 +336,10 @@ body {
     color: #333 !important;
     border: 2px solid rgba(102, 126, 234, 0.2) !important;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .view-results-page-wrapper .btn:hover {
